@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turtle Rover</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <script src="https://unpkg.com/tailwindcss-jit-cdn" async></script>
+</head>
+
+<body>
+  <div id="app" class="p-8" v-scope @mounted="mounted($el)" @unmounted="unmounted($el)">
+    <div class="
+      relative grid w-[min-content] max-w-full h-full overflow-auto
+      grid-cols-[repeat(var(--max),1fr)] grid-rows-[repeat(var(--max),1fr)]
+    ">
+      <span v-for="i in max * max" class="rover-cell bg-blue-100 w-20 odd:bg-blue-50"></span>
+      <span class="
+          rover flex items-center justify-center absolute transition z-1
+          w-[calc(100%/var(--max))] min-w-20 top-[calc(100%-100%/var(--max))]
+          after:relative after:rounded-full after:bg-green-500 after:w-8 after:h-8 after:transition
+        " :style="roverStyle"></span>
+    </div>
+
+    <div class="mt-8">
+      <code>{{ JSON.stringify(rover, null, 2) }}</code>
+      <div class="mt-2">
+        <button class="btn" @click="rotate('L')">Left</button>
+        <button class="btn btn-green" @click="move">Move</button>
+        <button class="btn" @click="rotate('R')">Right</button>
+      </div>
+    </div>
+  </div>
+
+  <style type="postcss">
+    :root {
+      --max: 7;
+    }
+
+    body {
+      @apply font-sans;
+    }
+
+    * {
+      @apply box-border;
+    }
+
+    .btn {
+      @apply bg-blue-400 px-3 py-2 rounded text-white hover:bg-blue-500 transition;
+    }
+
+    .btn-green {
+      @apply bg-green-500 hover:bg-green-600;
+    }
+
+    .rover-cell, .rover {
+      aspect-ratio: 1;
+    }
+
+    .rover::after {
+      box-shadow:
+        0 0 0 0.15em theme('colors.green.600'),
+        0 -1.2em 0 -0.55em theme('colors.green.300'),
+        0 -1.2em 0 -0.4em theme('colors.green.400'),
+        0.8em -0.5em 0 -0.5em theme('colors.green.400'),
+        -0.8em -0.5em 0 -0.5em theme('colors.green.400'),
+        0.8em 0.5em 0 -0.5em theme('colors.green.400'),
+        -0.8em 0.5em 0 -0.5em theme('colors.green.400');
+    }
+  </style>
+</body>
+
+</html>
