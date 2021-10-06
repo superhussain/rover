@@ -14,15 +14,16 @@
 <body>
   <div id="app" class="p-8" v-scope @mounted="mounted($el)" @unmounted="unmounted($el)">
     <div class="
-      relative grid w-[min-content] max-w-full h-full overflow-auto
-      grid-cols-[repeat(var(--max),1fr)] grid-rows-[repeat(var(--max),1fr)]
+      relative grid w-[min-content] max-w-full h-full overflow-auto sm:overflow-hidden
+      grid-cols-[repeat(var(--max),1fr)] grid-rows-[repeat(var(--max),1fr)] rounded-xl
     ">
-      <span v-for="i in max * max" class="rover-cell bg-blue-100 w-20 odd:bg-blue-50"></span>
-      <span class="
-          rover flex items-center justify-center absolute transition z-1
-          w-20 min-w-20 top-[calc(100%-100%/var(--max))]
-          after:relative after:rounded-full after:bg-green-500 after:w-8 after:h-8 after:transition
-        " :style="roverStyle"></span>
+      <span v-for="i in max * max" :key="`cell-${i}`" class="rover-cell bg-blue-100 w-20 odd:bg-blue-50"></span>
+      <span v-for="(_, i) in fireballs" :key="`fireball-${i}`" class="fireball" :style="fireballStyle(i)"></span>
+      <span class="rover" :style="roverStyle"></span>
+      <div v-if="gameOver" class="
+        game-over absolute bg-black bg-opacity-75 flex font-black font-mono inset-0
+        items-center justify-center text-5xl text-center text-white z-[2]
+      ">GAME OVER</div>
     </div>
 
     <div class="mt-8">
@@ -31,6 +32,10 @@
         <button class="btn" @click="rotate('L')">Left</button>
         <button class="btn btn-green" @click="move">Move</button>
         <button class="btn" @click="rotate('R')">Right</button>
+      </div>
+      <div class="mt-2">
+        <button class="btn btn-red" @click="randomizeItems">Randomize Items</button>
+        <button class="btn btn-green" @click="restart">Restart</button>
       </div>
     </div>
   </div>
@@ -41,7 +46,7 @@
     }
 
     body {
-      @apply font-sans;
+      @apply font-mono;
     }
 
     * {
@@ -49,18 +54,29 @@
     }
 
     .btn {
-      @apply bg-blue-400 px-3 py-2 rounded text-white hover:bg-blue-500 transition;
+      @apply bg-blue-400 px-3 py-2 rounded text-white hover:bg-blue-500 font-mono transition;
     }
 
     .btn-green {
       @apply bg-green-500 hover:bg-green-600;
     }
 
-    .rover-cell, .rover {
+    .btn-red {
+      @apply bg-red-400 hover:bg-red-500;
+    }
+
+    .rover-cell, .rover, .fireball {
       aspect-ratio: 1;
     }
 
+    .rover, .fireball {
+      @apply flex items-center justify-center absolute transition z-[1]
+      w-20 min-w-[5rem] top-[calc(100%-100%/var(--max))] after:relative;
+    }
+
     .rover::after {
+      @apply rounded-full bg-green-500 w-8 h-8 transition;
+
       box-shadow:
         0 0 0 0.15em theme('colors.green.600'),
         0 -1.2em 0 -0.55em theme('colors.green.300'),
@@ -69,6 +85,20 @@
         -0.8em -0.5em 0 -0.5em theme('colors.green.400'),
         0.8em 0.5em 0 -0.5em theme('colors.green.400'),
         -0.8em 0.5em 0 -0.5em theme('colors.green.400');
+    }
+
+    .fireball::after {
+      @apply rounded-full w-4 h-6 transition bg-yellow-400;
+
+      box-shadow:
+        0 -0.1em 0 0.25em theme('colors.yellow.500'),
+        0 -0.15em 0 0.45em theme('colors.red.400'),
+        -0.15em -0.1em 0 0.25em theme('colors.yellow.500'),
+        -0.15em -0.15em 0 0.45em theme('colors.red.400'),
+        0.15em -0.1em 0 0.25em theme('colors.yellow.500'),
+        0.15em -0.15em 0 0.45em theme('colors.red.400'),
+        0 -0.4em 0 0.3em theme('colors.red.400'),
+        0 -0.6em 0 0.15em theme('colors.red.400');
     }
   </style>
 </body>
